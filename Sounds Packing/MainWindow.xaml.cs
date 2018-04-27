@@ -280,39 +280,49 @@ namespace Sounds_Packing
         {
             secList.Sort();
             secList.Reverse();
-            List<int> Folders = new List<int>();
-            int[] allocation = new int[secList.Count];
-            for (int i = 0; i < secList.Count; i++)
+            List<int> Folders = new List<int>();      //folder list, complexity: O(1) 
+            int[] allocation = new int[secList.Count]; //array with the number of files, complexity: O(1) 
+            for (int i = 0; i < secList.Count; i++)     //complexity: O(n), (n -> secList.Count)
             {
-                allocation[i] = -1;
+                allocation[i] = -1;                 //intialize all files by -1 as the file is still not allocated
             }
-            for (int i = 0; i < secList.Count; i++)
+            for (int i = 0; i < secList.Count; i++)  //complexity: O(n), (n -> secList.Count)
             {
-                int fstIdx = -1;
-                for (int j = 0; j < Folders.Count; j++)
-                {
-                    if (Folders[j] >= secList[i])
-                    {
+                int fstIdx = -1;                 // Complexity: O(1)   
+                                                 // Initialize the variable of fisrt index as not found
 
-                        fstIdx = j;
+                for (int j = 0; j < Folders.Count; j++)//complexity: O(m), (m -> Folders.Count)
+                {
+                    if (Folders[j] >= secList[i]) // Complexity: O(1)
+                    {                             //Compare between Folders and Files to find the fisrt suitable Folder
+                    
+
+                        fstIdx = j;               // Complexity:O(1)
+                                                  //put the current folder in the fisrt fit index
                         break;
                     }
 
                 }
-                if (fstIdx != -1)
+                if (fstIdx != -1)                 // Compexity: O(1)
+                                                  // If there is a suitable place
                 {
-                    allocation[i] = fstIdx;
-                    Folders[fstIdx] -= secList[i];
+                    allocation[i] = fstIdx;                  //Complexity: O(1)
+                                                             // assign folder i to be put in fstIdx folder
+
+                    Folders[fstIdx] -= secList[i];           // Complexity: O(1)
+                                                             //Reduce memory of the files 
                 }
-                else if (fstIdx == -1)
+                else if (fstIdx == -1)             // Complexity :O(1)
+                                                   //If there is not a place in folders
                 {
-                    Folders.Add(maxSec);
+                    Folders.Add(maxSec);           //Create new folder to add the file
                     Folders[Folders.Count - 1] -= secList[i];
                     allocation[i] = Folders.Count - 1;
                 }
 
             }
 
+                                           //Total Complexity of First-Fit : O(N*M)
             Allocatingfiles(allocation);
         }
         static void BestFit()
