@@ -7,6 +7,29 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        
+        <StackPanel Margin="284,67,118,197.5">
+            <WrapPanel HorizontalAlignment="Center" DockPanel.Dock="Top" Margin="0,0,0,10">
+                <Button x:Name="btnOpenFile" Click="btnOpenFile_Click" Content="Open file" Background="#FF58595B"/>
+            </WrapPanel>
+        </StackPanel>
+        <StackPanel Margin="284,125,118,139.5">
+            <WrapPanel HorizontalAlignment="Center" DockPanel.Dock="Top" Margin="0,0,0,10">
+                <Button x:Name="btnOpendirsource" Click="btnOpendirsource_Click" Content="Source" Background="#FF58595B"/>
+            </WrapPanel>
+        </StackPanel>
+        <StackPanel Margin="284,183,118,81.5">
+            <WrapPanel HorizontalAlignment="Center" DockPanel.Dock="Top" Margin="0,0,0,10">
+                <Button x:Name="btnOpendirtarget" Click="btnOpendirtarget_Click" Content="Target" Background="#FF58595B"/>
+            </WrapPanel>
+        </StackPanel>
+        <StackPanel Margin="284,241,118,24.5">
+            <WrapPanel HorizontalAlignment="Center" DockPanel.Dock="Top" Margin="0,0,0,10">
+                <Button x:Name="btnStart" Click="btnStart_Click" Content="Start" Background="#FF58595B"/>
+            </WrapPanel>
+        </StackPanel>
+        <TextBox x:Name="secBox" HorizontalAlignment="Left" Height="23" Margin="118,195,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+
     </Grid>
+
+
 </Window>
