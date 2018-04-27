@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Forms;
 using System.Threading;
+using System.Diagnostics;
 
 namespace Sounds_Packing
 {
@@ -24,6 +25,13 @@ namespace Sounds_Packing
     /// </summary>
     public partial class MainWindow : Window
     {
+        static public bool worstfit = false;
+        static public bool worstfitdec = false;
+        static public bool firstfit = false;
+        static public bool firstfitdec = false;
+        static public bool bestfit = false;
+        static public bool folderfilling = false;
+        static public bool priorityqueuee = false;
         static public string infoPath; 
 
         static public List<int> secList = new List<int>();
@@ -31,11 +39,11 @@ namespace Sounds_Packing
         static string sourcePath;
         static string targetPath;
         static int maxSec;
+
         public MainWindow()
         {
             InitializeComponent();
         }
-
         private void btnOpenFile_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
@@ -50,7 +58,7 @@ namespace Sounds_Packing
             FileStream FS = new FileStream(infoPath, FileMode.Open);
             StreamReader file = new StreamReader(FS);
             
-            while (file.Peek() != -1)
+            while (file.Peek() != -1)       
             {
                 string readline = file.ReadLine();
                 l.Add(readline);
@@ -93,7 +101,7 @@ namespace Sounds_Packing
                 string destFile = System.IO.Path.Combine(tPath, fileName);
                 System.IO.File.Copy(sourceFile, destFile, true);
             }
-            metaData(allocation);
+           // metaData(allocation);
         }
         private void btnOpendirsource_Click(object sender, RoutedEventArgs e)
         {
@@ -121,9 +129,57 @@ namespace Sounds_Packing
             Thread t = new Thread(delegate () { WorstFit(); });
             //  Thread t1 = new Thread(() => WorstFit());
             t.Start();
+            if(worstfit==true)
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+
+                Thread w = new Thread(delegate () { WorstFit(); });
+                sw.Stop();
+                System.Windows.MessageBox.Show("Worst Fit takes ", sw.ElapsedMilliseconds.ToString());
+            }
+            else if(firstfitdec==true)
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                Thread f = new Thread(delegate () { firstFitDec(); });
+                sw.Stop();
+                System.Windows.MessageBox.Show("First Fit takes ", sw.ElapsedMilliseconds.ToString());
+            }
+            else if(worstfitdec==true)
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                Thread ww = new Thread(delegate () { WorstFitDec(); });
+                sw.Stop();
+                System.Windows.MessageBox.Show("Worst Fit Dec takes ", sw.ElapsedMilliseconds.ToString());
+            }
+            else if(firstfit==true)
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                Thread ff = new Thread(delegate () { firstFitDec(); });
+                sw.Stop();
+                System.Windows.MessageBox.Show("First Fit Dec takes ", sw.ElapsedMilliseconds.ToString());
+            }
+            else if(folderfilling==true)
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                Thread fff = new Thread(delegate () { folderFilling(); });
+                sw.Stop();
+                System.Windows.MessageBox.Show("Folder Filling takes ", sw.ElapsedMilliseconds.ToString());
+            }
+            else if(bestfit==true)
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                Thread b = new Thread(delegate () { BestFit(); });
+                sw.Stop();
+                System.Windows.MessageBox.Show("Best Fit takes ", sw.ElapsedMilliseconds.ToString());
+            }
         }
         static public List<List<int>> ll = new List<List<int>>();
-        
         static public void metaData(int[]allocation)
         {
             //  ll[0].Add(0);
@@ -157,78 +213,75 @@ namespace Sounds_Packing
                 FS.Close();
             }*/
         }
-      //  2-->1,2,3,4
-      //  3-->5,6,7
-
         static void WorstFit()
         {
             List<int> Folders = new List<int>();
             int[] allocation = new int[secList.Count];
-            for (int i = 0; i < secList.Count; i++)
+            for (int i = 0; i < secList.Count; i++)               // Complexity=O(n) Where n=number of files
             {
-                allocation[i] = -1;
+                allocation[i] = -1;                               //initialize all files by -1 as they are not allocated  
             }
-            for (int i = 0; i < secList.Count; i++)
+            for (int i = 0; i < secList.Count; i++)               // Complexity=O(n) Where n=number of files
             {
-                int wstIdx = -1;
-                for (int j = 0; j < Folders.Count; j++)
+                int wstIdx = -1;                                 //initialize all files by -1 as they are not allocated  
+                for (int j = 0; j < Folders.Count; j++)          // Complexity=O(m) Where m=number of folders 
                 {
-                    if (Folders[j] >= secList[i])
+                    if (Folders[j] >= secList[i])                //Compare folder size by file size to find empty folder   
                     {
-                        if (wstIdx == -1)
-                            wstIdx = j;
-                        else if (Folders[wstIdx] <= Folders[j])
-                            wstIdx = j;
+                        if (wstIdx == -1)                       //Compare if still not allocated in file
+                            wstIdx = j;                         // Let worstindex take the index of the  folder found
+                        else if (Folders[wstIdx] <= Folders[j]) //Find if there is a larger folder to allocate in 
+                            wstIdx = j;                         //Let worstindex take the index of folder found    
                     }
 
-                }
-                if (wstIdx != -1)
+                } 
+                if (wstIdx != -1)                              // There is a folder found to allocate in 
                 {
-                    allocation[i] = wstIdx;
-                    Folders[wstIdx] -= secList[i];
+                    allocation[i] = wstIdx;                   //Alocate file i to worstindex
+                    Folders[wstIdx] -= secList[i];            //Subtract the file insert from the folder and the result is the size remaining in the folder 
                 }
-                else if (wstIdx == -1)
+                else if (wstIdx == -1)                        //There isn't a folder found to allocate in 
                 {
-                    Folders.Add(maxSec);
-                    Folders[Folders.Count - 1] -= secList[i];
-                    allocation[i] = Folders.Count - 1;
+                    Folders.Add(maxSec);                       //Create new folder with max size in list
+                    Folders[Folders.Count - 1] -= secList[i];  //Alocate file i to worstindex
+                    allocation[i] = Folders.Count - 1;          //Subtract the file insert from the folder and the result is the size remaining in the folder 
                 }
 
-            }
+            }//Total Complexity= O(n*m) Where n=number of files*m=number of folders 
             Allocatingfiles( allocation);
         }
         static void WorstFitPQ()
         {
-            int folderindex = 0;
+            int folderindex = 0;                 
             PriorityQueue<Tuple<int, int>> Folders = new PriorityQueue<Tuple<int, int>>();
             int[] allocation = new int[secList.Count];
-            for (int i = 0; i < secList.Count; i++)
+            for (int i = 0; i < secList.Count; i++)         //Complexity = O(n) Where n=number of files
             {
-                allocation[i] = -1;
+                allocation[i] = -1;                         //Initialize all files by -1 as they are not allocated
             }
 
-            for (int i = 0; i < secList.Count; i++)
+            for (int i = 0; i < secList.Count; i++)         // Complexity=O(n) Where n=number of files
             {
-                if (Folders.Count > 0)
+                if (Folders.Count > 0)                       //Check if there is elemenets in the queue or not
                 {
-                    Tuple<int, int> tempp = Folders.Peek();
-                    if (tempp.Item1 > secList[i])
+                    Tuple<int, int> tempp = Folders.Peek();  //Make pair of size of folder and index and intializing by top element in priority queue
+                    if (tempp.Item1 > secList[i])             //Compare folder size by file size to find empty folder   
                     {
-                        var top = Folders.list[0];
-                        Folders.Dequeue();
-                        int rem = top.Item1, ind = top.Item2;
-                        rem -= secList[i];
-                        Tuple<int, int> after = new Tuple<int, int>(rem, ind);
-                        Folders.Enqueue(after);
-                        allocation[i] = ind;
+                        var top = Folders.list[0];            // Initalize top by first intem in the folder
+                        Folders.Dequeue();                    //Remove the top item in the queue
+                        int rem = top.Item1, ind = top.Item2;  // Initalize the rem by the top file size and  ind by the top index 
+                        rem -= secList[i];                      //Subtract the file insert from rem and the result is the size remaining in the folder 
+                        Tuple<int, int> after = new Tuple<int, int>(rem, ind);//Initalize after as pair of folder and index by pair of rem and ind
+                        Folders.Enqueue(after);                 //Insert after in queue
+                        allocation[i] = ind;                     //Alocate file i by ind
 
                     }
                 }
 
-                if (allocation[i] == -1)
+                if (allocation[i] == -1)                      //There isn't a folder found to allocate in 
                 {
                     int rem = maxSec - secList[i], ind = folderindex++;
-                    Tuple<int, int> tmp = new Tuple<int, int>(rem, ind);
+                    Tuple<int, int> tmp = new Tuple<int, int>(rem, ind);  //Initalize temp as pair of folder and index by pair of rem and ind
                     Folders.Enqueue(tmp);
                     allocation[i] = ind;
                 }
@@ -238,42 +291,43 @@ namespace Sounds_Packing
         }
         static void WorstFitDec()
         {
-            secList.Sort();
-            secList.Reverse();
-            List<int> Folders = new List<int>();
-            int[] allocation = new int[secList.Count];
-            for (int i = 0; i < secList.Count; i++)
+            secList.Sort();                                  //Sort
+            secList.Reverse();                               //Reverse after sorting to have the file sorded in a decreasing order
+            List<int> Folders = new List<int>();             //Complexity = O(1)
+            int[] allocation = new int[secList.Count];      
+            for (int i = 0; i < secList.Count; i++)         // Complexity=O(n) Where n=number of files
             {
-                allocation[i] = -1;
-            }
-            for (int i = 0; i < secList.Count; i++)
+                allocation[i] = -1;                         //initialize all files by -1 as they are not allocated  
+            }                                          
+            for (int i = 0; i < secList.Count; i++)         // Complexity=O(n) Where n=number of files
             {
-                int wstIdx = -1;
-                for (int j = 0; j < Folders.Count; j++)
+                int wstIdx = -1;                            //intalize worstindex first by -1 as there is still no index found
+               
+                for (int j = 0; j < Folders.Count; j++)    // Complexity=O(m) Where m=number of folders 
                 {
-                    if (Folders[j] >= secList[i])
+                    if (Folders[j] >= secList[i])          //Compare folder size by file size to find empty folder   
                     {
-                        if (wstIdx == -1)
-                            wstIdx = j;
-                        else if (Folders[wstIdx] <= Folders[j])
-                            wstIdx = j;
+                        if (wstIdx == -1)                //Compare if still not allocated in file
+                            wstIdx = j;                   // Let worstindex take the index of the  folder found
+                        else if (Folders[wstIdx] <= Folders[j])  //Find if there is a larger folder to allocate in
+                            wstIdx = j;                   //Let worstindex take the index of folder found       
                     }
 
                 }
-                if (wstIdx != -1)
+                if (wstIdx != -1)                   // There is a folder found to allocate in 
                 {
-                    allocation[i] = wstIdx;
-                    Folders[wstIdx] -= secList[i];
+                    allocation[i] = wstIdx;         //Alocate file i to worstindex
+                    Folders[wstIdx] -= secList[i];  //Subtract the file insert from the folder and the result is the size remaining in the folder 
                 }
-                else if (wstIdx == -1)
+                else if (wstIdx == -1)             //There isn't a folder found to allocate in 
                 {
-                    Folders.Add(maxSec);
-                    Folders[Folders.Count - 1] -= secList[i];
-                    allocation[i] = Folders.Count - 1;
+                    Folders.Add(maxSec);           //Create new folder with max size in list
+                    Folders[Folders.Count - 1] -= secList[i];  //Alocate file i to worstindex
+                    allocation[i] = Folders.Count - 1;          //Subtract the file insert from the folder and the result is the size remaining in the folder 
                 }
 
-            }
-            Allocatingfiles(allocation);
+            }//Total Complexity= O(n*m) Where n=number of files*m=number of folders 
+            Allocatingfiles(allocation); 
         }
         static void WorstFitDecPQ()
         {
@@ -282,115 +336,139 @@ namespace Sounds_Packing
             int folderindex = 0;
             PriorityQueue<Tuple<int, int>> Folders = new PriorityQueue<Tuple<int, int>>();
             int[] allocation = new int[secList.Count];
-            for (int i = 0; i < secList.Count; i++)
+            for (int i = 0; i < secList.Count; i++)    //Complexity = O(n) Where n=number of files
             {
-                allocation[i] = -1;
+                allocation[i] = -1;                    //Initialize all files by -1 as they are not allocated  
             }
 
-            for (int i = 0; i < secList.Count; i++)
+            for (int i = 0; i < secList.Count; i++)   // Complexity=O(n) Where n=number of files
             {
-                if (Folders.Count > 0)
+                if (Folders.Count > 0)              //Check if there is elemenets in the queue or not
                 {
-                    Tuple<int, int> tempp = Folders.Peek();
-                    if (tempp.Item1 > secList[i])
+                    Tuple<int, int> tempp = Folders.Peek(); //Make pair of size of folder and index and intializing by top element in priority queue
+                    if (tempp.Item1 > secList[i])            //Compare folder size by file size to find empty folder   
                     {
-                        var top = Folders.list[0];
-                        Folders.Dequeue();
-                        int rem = top.Item1, ind = top.Item2;
-                        rem -= secList[i];
-                        Tuple<int, int> after = new Tuple<int, int>(rem, ind);
-                        Folders.Enqueue(after);
-                        allocation[i] = ind;
+                        var top = Folders.list[0];         // Initalize top by first intem in the folder
+                        Folders.Dequeue();                 //Remove the top item in the queue
+                        int rem = top.Item1, ind = top.Item2;// Initalize the rem by the top file size and  ind by the top index 
+                        rem -= secList[i];                     //Subtract the file insert from rem and the result is the size remaining in the folder 
+                        Tuple<int, int> after = new Tuple<int, int>(rem, ind); //Initalize after as pair of folder and index by pair of rem and ind
+                        Folders.Enqueue(after);                //Insert after in queue
+                        allocation[i] = ind;                   //Alocate file i by ind
 
                     }
                 }
 
-                if (allocation[i] == -1)
+                if (allocation[i] == -1)            //There isn't a folder found to allocate in 
                 {
                     int rem = maxSec - secList[i], ind = folderindex++;
-                    Tuple<int, int> tmp = new Tuple<int, int>(rem, ind);
-                    Folders.Enqueue(tmp);
-                    allocation[i] = ind;
+                    Tuple<int, int> tmp = new Tuple<int, int>(rem, ind);  //Initalize temp as pair of folder and index by pair of rem and ind
+                    Folders.Enqueue(tmp);  //Insert temp in queue
+                    allocation[i] = ind;   //Alocate file i by ind
                 }
 
             }
             Allocatingfiles(allocation);
+            //Total Complexity=O(n)  Where n=number of files
         }
         static void firstFitDec()
         {
             secList.Sort();
             secList.Reverse();
-            List<int> Folders = new List<int>();
-            int[] allocation = new int[secList.Count];
-            for (int i = 0; i < secList.Count; i++)
+            List<int> Folders = new List<int>();      //folder list, complexity: O(1) 
+            int[] allocation = new int[secList.Count]; //array with the number of files, complexity: O(1) 
+            for (int i = 0; i < secList.Count; i++)     //complexity: O(n), (n -> secList.Count)
             {
-                allocation[i] = -1;
+                allocation[i] = -1;                 //intialize all files by -1 as the file is still not allocated
             }
-            for (int i = 0; i < secList.Count; i++)
+            for (int i = 0; i < secList.Count; i++)  //complexity: O(n), (n -> secList.Count)
             {
-                int fstIdx = -1;
-                for (int j = 0; j < Folders.Count; j++)
-                {
-                    if (Folders[j] >= secList[i])
-                    {
+                int fstIdx = -1;                 // Complexity: O(1)   
+                                                 // Initialize the variable of fisrt index as not found
 
-                        fstIdx = j;
+                for (int j = 0; j < Folders.Count; j++)//complexity: O(m), (m -> Folders.Count)
+                {
+                    if (Folders[j] >= secList[i]) // Complexity: O(1)
+                    {                             //Compare between Folders and Files to find the fisrt suitable Folder
+                    
+
+                        fstIdx = j;               // Complexity:O(1)
+                                                  //put the current folder in the fisrt fit index
                         break;
                     }
 
                 }
-                if (fstIdx != -1)
+                if (fstIdx != -1)                 // Compexity: O(1)
+                                                  // If there is a suitable place
                 {
-                    allocation[i] = fstIdx;
-                    Folders[fstIdx] -= secList[i];
+                    allocation[i] = fstIdx;                  //Complexity: O(1)
+                                                             // assign folder i to be put in fstIdx folder
+
+                    Folders[fstIdx] -= secList[i];           // Complexity: O(1)
+                                                             //Reduce memory of the files 
                 }
-                else if (fstIdx == -1)
+                else if (fstIdx == -1)             // Complexity :O(1)
+                                                   //If there is not a place in folders
                 {
-                    Folders.Add(maxSec);
+                    Folders.Add(maxSec);           //Create new folder to add the file
                     Folders[Folders.Count - 1] -= secList[i];
                     allocation[i] = Folders.Count - 1;
                 }
 
             }
 
+                                           //Total Complexity of First-Fit : O(N*M)
             Allocatingfiles(allocation);
         }
         static void BestFit()
-        {
-            int[] allocation = new int[secList.Count];
-            List<int> Folders = new List<int>();
-            for (int i = 0; i < secList.Count; i++)
-            {
-                allocation[i] = -1;
+        { 
+            int[] allocation = new int[secList.Count];// Complexity is O(1), Array with number of files
+            List<int> Folders = new List<int>();       //Complexity is O(1), Folder list
+
+            
+            for (int i = 0; i < secList.Count; i++) //O(N)  as N is the number of the files
+            {                                      
+                                                    
+                allocation[i] = -1;                 //O(1), Initialize all files by -1 as they are not allocated
             }
-            for (int i = 0; i < secList.Count; i++)
-            {
-                int bstIdx = -1;
-                for (int j = 0; j < Folders.Count; j++)
+                                                     
+                                                      
+            for (int i = 0; i < secList.Count; i++)   // Find the minimum folder to put the file 
+                                                      // Complexity of the 2 loops is O(N*M)
+            {                                        //Complexity of Outer loop is O(N) as N is the number of files
+                
+                int bstIdx = -1;                     //  O(1) 
+                                                    //initialize the variable of bestIndex as not found (there is not a place in folders yet)
+
+                for (int j = 0; j < Folders.Count; j++)  //Complexity of the inner loop is O(M) as M is the number of Folders
                 {
-                    if (Folders[j] >= secList[i])
+                    if (Folders[j] >= secList[i]) //O(1),Compare File size and folder size to find the best folder
                     {
-                        if (bstIdx == -1)
-                            bstIdx = j;
-                        else if (Folders[bstIdx] > Folders[j])
-                            bstIdx = j;
+                        if (bstIdx == -1)         //O(1) if the bestindex still -1 so there isn't a suitable folder for it
+                            bstIdx = j;           //O(1), put the  current folder in the bestfit index
+
+                        else if (Folders[bstIdx] > Folders[j]) // O(1),if the folder of best index is larger than the current suitable folder 
+                            bstIdx = j;                        //O(1) Change bestfit index to the currrent Folder
                     }
 
                 }
-                if (bstIdx != -1)
-                {
-                    allocation[i] = bstIdx;
-                    Folders[bstIdx] -= secList[i];
+               
+                if (bstIdx != -1)                      //O(1),If the there is a suitable place
+                { 
+                                              
+                    allocation[i] = bstIdx;            //O(1),allocate process to the folder
+                                                   
+                    Folders[bstIdx] -= secList[i];     //O(1),Reduce memory of the files
                 }
-                else if (allocation[i] == -1)
+                else if (allocation[i] == -1)         // O(1),if there is not a place in folders 
                 {
-
-                    int toadd = maxSec - secList[i];
+                                                     
+                    int toadd = maxSec - secList[i];     //Create new Folder to add files in it
                     Folders.Add(toadd);
-                    allocation[i] = Folders.Count - 1;
+                    allocation[i] = Folders.Count - 1;  
                 }
 
-            }
+            }                                           // Total Complexity of the Best-Fit = O(N*M)
             Allocatingfiles(allocation);
         }
         static List<int> FolderFilling(ref List<Tuple<int, int>> v, ref List<Tuple<int, int>> w, int n, int W,int[,]V,bool[,]keep)
@@ -470,7 +548,8 @@ namespace Sounds_Packing
             {
                 Console.WriteLine("file " + countt.ToString() + ' ');
                 List<int> folder_filling_Allocation = FolderFilling(ref v, ref w, v.Count() - 1, maxSec,V,keep);
-                string sPath = sourcePath;                 string tPath = targetPath; 
+                string sPath = sourcePath;
+                string tPath = targetPath; 
                 tPath += countt.ToString();
                 if (!System.IO.Directory.Exists(tPath))
                 {
@@ -492,5 +571,47 @@ namespace Sounds_Packing
             }
         }
 
+        private void button5_Click(object sender, RoutedEventArgs e)
+        {
+            worstfitdec = true;
+        }
+
+        private void secBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void button4_Click(object sender, RoutedEventArgs e)
+        {
+            firstfit = true;
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            bestfit = true;
+        }
+
+        private void button2_Click(object sender, RoutedEventArgs e)
+        {
+            worstfit = true;
+        }
+
+        private void button3_Click(object sender, RoutedEventArgs e)
+        {
+            firstfitdec = true;
+        }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+            folderfilling = true;
+        }
+
+        private void Priority_Queue_Checked(object sender, RoutedEventArgs e)
+        {
+           if(Priority_Queue.IsChecked==true)
+            {
+                priorityqueuee = true;
+            }
+        }
     }
 }
