@@ -356,41 +356,54 @@ namespace Sounds_Packing
             Allocatingfiles(allocation);
         }
         static void BestFit()
-        {
-            int[] allocation = new int[secList.Count];
-            List<int> Folders = new List<int>();
-            for (int i = 0; i < secList.Count; i++)
-            {
-                allocation[i] = -1;
+        { 
+            int[] allocation = new int[secList.Count];// Complexity is O(1), Array with number of files
+            List<int> Folders = new List<int>();       //Complexity is O(1), Folder list
+
+            
+            for (int i = 0; i < secList.Count; i++) //O(N)  as N is the number of the files
+            {                                      
+                                                    
+                allocation[i] = -1;                 //O(1), Initialize all files by -1 as they are not allocated
             }
-            for (int i = 0; i < secList.Count; i++)
-            {
-                int bstIdx = -1;
-                for (int j = 0; j < Folders.Count; j++)
+                                                     
+                                                      
+            for (int i = 0; i < secList.Count; i++)   // Find the minimum folder to put the file 
+                                                      // Complexity of the 2 loops is O(N*M)
+            {                                        //Complexity of Outer loop is O(N) as N is the number of files
+                
+                int bstIdx = -1;                     //  O(1) 
+                                                    //initialize the variable of bestIndex as not found (there is not a place in folders yet)
+
+                for (int j = 0; j < Folders.Count; j++)  //Complexity of the inner loop is O(M) as M is the number of Folders
                 {
-                    if (Folders[j] >= secList[i])
+                    if (Folders[j] >= secList[i]) //O(1),Compare File size and folder size to find the best folder
                     {
-                        if (bstIdx == -1)
-                            bstIdx = j;
-                        else if (Folders[bstIdx] > Folders[j])
-                            bstIdx = j;
+                        if (bstIdx == -1)         //O(1) if the bestindex still -1 so there isn't a suitable folder for it
+                            bstIdx = j;           //O(1), put the  current folder in the bestfit index
+
+                        else if (Folders[bstIdx] > Folders[j]) // O(1),if the folder of best index is larger than the current suitable folder 
+                            bstIdx = j;                        //O(1) Change bestfit index to the currrent Folder
                     }
 
                 }
-                if (bstIdx != -1)
-                {
-                    allocation[i] = bstIdx;
-                    Folders[bstIdx] -= secList[i];
+               
+                if (bstIdx != -1)                      //O(1),If the there is a suitable place
+                { 
+                                              
+                    allocation[i] = bstIdx;            //O(1),allocate process to the folder
+                                                   
+                    Folders[bstIdx] -= secList[i];     //O(1),Reduce memory of the files
                 }
-                else if (allocation[i] == -1)
+                else if (allocation[i] == -1)         // O(1),if there is not a place in folders 
                 {
-
-                    int toadd = maxSec - secList[i];
+                                                     
+                    int toadd = maxSec - secList[i];     //Create new Folder to add files in it
                     Folders.Add(toadd);
-                    allocation[i] = Folders.Count - 1;
+                    allocation[i] = Folders.Count - 1;  
                 }
 
-            }
+            }                                           // Total Complexity of the Best-Fit = O(N*M)
             Allocatingfiles(allocation);
         }
         static List<int> FolderFilling(ref List<Tuple<int, int>> v, ref List<Tuple<int, int>> w, int n, int W,int[,]V,bool[,]keep)
