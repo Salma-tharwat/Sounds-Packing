@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Forms;
 using System.Threading;
+using System.Diagnostics;
 
 namespace Sounds_Packing
 {
@@ -24,6 +25,13 @@ namespace Sounds_Packing
     /// </summary>
     public partial class MainWindow : Window
     {
+        static public bool worstfit = false;
+        static public bool worstfitdec = false;
+        static public bool firstfit = false;
+        static public bool firstfitdec = false;
+        static public bool bestfit = false;
+        static public bool folderfilling = false;
+        static public bool priorityqueuee = false;
         static public string infoPath; 
 
         static public List<int> secList = new List<int>();
@@ -31,11 +39,26 @@ namespace Sounds_Packing
         static string sourcePath;
         static string targetPath;
         static int maxSec;
+
         public MainWindow()
         {
             InitializeComponent();
         }
+        public class Pair<T, U>
+        {
+            public Pair()
+            {
+            }
 
+            public Pair(T first, U second)
+            {
+                this.First = first;
+                this.Second = second;
+            }
+
+            public T First  { get; set; }
+            public U Second  { get; set; }
+        };
         private void btnOpenFile_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
@@ -118,8 +141,69 @@ namespace Sounds_Packing
             Thread t = new Thread(delegate () { folderFilling(); });
           //  Thread t1 = new Thread(() => WorstFit());
             t.Start();
+            if(worstfit==true)
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+
+                Thread w = new Thread(delegate () { WorstFit(); });
+                sw.Stop();
+                System.Windows.MessageBox.Show("Worst Fit takes ", sw.ElapsedMilliseconds.ToString());
+            }
+            else if(firstfitdec==true)
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                Thread f = new Thread(delegate () { firstFitDec(); });
+                sw.Stop();
+                System.Windows.MessageBox.Show("First Fit takes ", sw.ElapsedMilliseconds.ToString());
+            }
+            else if(worstfitdec==true)
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                Thread ww = new Thread(delegate () { WorstFitDec(); });
+                sw.Stop();
+                System.Windows.MessageBox.Show("Worst Fit Dec takes ", sw.ElapsedMilliseconds.ToString());
+            }
+            else if(firstfit==true)
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                Thread ff = new Thread(delegate () { firstFitDec(); });
+                sw.Stop();
+                System.Windows.MessageBox.Show("First Fit Dec takes ", sw.ElapsedMilliseconds.ToString());
+            }
+            else if(folderfilling==true)
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                Thread fff = new Thread(delegate () { folderFilling(); });
+                sw.Stop();
+                System.Windows.MessageBox.Show("Folder Filling takes ", sw.ElapsedMilliseconds.ToString());
+            }
+            else if(bestfit==true)
+            {
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+                Thread b = new Thread(delegate () { BestFit(); });
+                sw.Stop();
+                System.Windows.MessageBox.Show("Best Fit takes ", sw.ElapsedMilliseconds.ToString());
+            }
         }
 
+        static void metaData(int[] allocation)
+        {
+            int[] metadata = new int[allocation.Length+1];
+            Pair<int, int>[] index_num = new Pair<int, int>[allocation.Length+1];
+            for (int i=0;i<allocation.Length;i++)
+            {
+                
+                int folder = i + 1; int file = allocation[i];
+                index_num[folder].First++;
+
+            }
+        }
         static void WorstFit()
         {
             List<int> Folders = new List<int>();
@@ -426,7 +510,8 @@ namespace Sounds_Packing
             {
                 Console.WriteLine("file " + countt.ToString() + ' ');
                 List<int> folder_filling_Allocation = FolderFilling(ref v, ref w, v.Count() - 1, maxSec,V,keep);
-                string sPath = sourcePath;                 string tPath = targetPath; 
+                string sPath = sourcePath;
+                string tPath = targetPath; 
                 tPath += countt.ToString();
                 if (!System.IO.Directory.Exists(tPath))
                 {
@@ -448,5 +533,47 @@ namespace Sounds_Packing
             }
         }
 
+        private void button5_Click(object sender, RoutedEventArgs e)
+        {
+            worstfitdec = true;
+        }
+
+        private void secBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void button4_Click(object sender, RoutedEventArgs e)
+        {
+            firstfit = true;
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            bestfit = true;
+        }
+
+        private void button2_Click(object sender, RoutedEventArgs e)
+        {
+            worstfit = true;
+        }
+
+        private void button3_Click(object sender, RoutedEventArgs e)
+        {
+            firstfitdec = true;
+        }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
+            folderfilling = true;
+        }
+
+        private void Priority_Queue_Checked(object sender, RoutedEventArgs e)
+        {
+           if(Priority_Queue.IsChecked==true)
+            {
+                priorityqueuee = true;
+            }
+        }
     }
 }

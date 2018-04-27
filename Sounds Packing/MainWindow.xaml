@@ -5,29 +5,42 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Sounds_Packing"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        <StackPanel Margin="284,67,118,197.5">
-            <WrapPanel HorizontalAlignment="Center" DockPanel.Dock="Top" Margin="0,0,0,10">
-                <Button x:Name="btnOpenFile" Click="btnOpenFile_Click" Content="Open file" Background="#FF58595B"/>
-            </WrapPanel>
-        </StackPanel>
-        <StackPanel Margin="284,125,118,139.5">
-            <WrapPanel HorizontalAlignment="Center" DockPanel.Dock="Top" Margin="0,0,0,10">
-                <Button x:Name="btnOpendirsource" Click="btnOpendirsource_Click" Content="Source" Background="#FF58595B"/>
-            </WrapPanel>
-        </StackPanel>
-        <StackPanel Margin="284,183,118,81.5">
-            <WrapPanel HorizontalAlignment="Center" DockPanel.Dock="Top" Margin="0,0,0,10">
-                <Button x:Name="btnOpendirtarget" Click="btnOpendirtarget_Click" Content="Target" Background="#FF58595B"/>
-            </WrapPanel>
-        </StackPanel>
-        <StackPanel Margin="284,241,118,24.5">
-            <WrapPanel HorizontalAlignment="Center" DockPanel.Dock="Top" Margin="0,0,0,10">
-                <Button x:Name="btnStart" Click="btnStart_Click" Content="Start" Background="#FF58595B"/>
-            </WrapPanel>
-        </StackPanel>
-        <TextBox x:Name="secBox" HorizontalAlignment="Left" Height="23" Margin="118,195,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="120"/>
+        Title="MainWindow" Height="750" Width="890">
+    <Grid Margin="0,-1,0,0.5">
+        <WrapPanel HorizontalAlignment="Center" Margin="460,67,295,523.5"/>
+        <WrapPanel HorizontalAlignment="Center" Margin="468,125,302,465.5"/>
+        <WrapPanel HorizontalAlignment="Center" Margin="470,183,304,407.5"/>
+        <WrapPanel HorizontalAlignment="Center" Margin="353,216,492,407"/>
+        <TextBox x:Name="secBox" HorizontalAlignment="Left" Height="24" Margin="746,670,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="64" TextChanged="secBox_TextChanged"/>
+        <Button x:Name="button" Content="Best Fit" HorizontalAlignment="Left" VerticalAlignment="Top" Width="150" Margin="696,192,0,0" FontFamily="Gabriola" FontSize="28" FontWeight="Bold" Background="#FF1A1818" BorderBrush="#FF145EF1" Height="58" Click="button_Click"/>
+        <Button x:Name="button1" Content="Folder Filling" HorizontalAlignment="Left" VerticalAlignment="Top" Width="184" Margin="543,510,0,0" FontFamily="Gabriola" FontSize="28" FontWeight="Bold" Background="#FF1A1818" Height="60" BorderBrush="#FF145EF1" Click="button1_Click"/>
+        <Button x:Name="button2" Content="Worst Fit" HorizontalAlignment="Left" VerticalAlignment="Top" Width="148" Margin="552,296,0,0" FontFamily="Gabriola" FontSize="28" FontWeight="Bold" Background="#FF1A1818" BorderBrush="#FF145EF1" Height="56" Click="button2_Click"/>
+        <Button x:Name="button3" Content="First Fit Dec." HorizontalAlignment="Left" VerticalAlignment="Top" Width="180" Margin="420,396,0,0" FontSize="28" FontFamily="Gabriola" FontWeight="Bold" Background="#FF1A1818" BorderBrush="#FF145EF1" Height="60" RenderTransformOrigin="0.394,-0.53" Click="button3_Click">
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform AngleY="-0.165"/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="-0.19"/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <Button x:Name="button4" Content="First Fit" HorizontalAlignment="Left" VerticalAlignment="Top" Width="152" Margin="418,195,0,0" FontFamily="Gabriola" FontSize="28" FontWeight="Bold" Background="#FF1A1818" BorderBrush="#FF145EF1" Height="58" Click="button4_Click"/>
+        <Button x:Name="button5" Content="Worst Fit Dec." HorizontalAlignment="Left" VerticalAlignment="Top" Width="180" Margin="668,396,0,0" FontSize="26" FontFamily="Gabriola" FontWeight="Bold" Background="#FF1A1818" BorderBrush="#FF145EF1" Height="60" Click="button5_Click"/>
+        <CheckBox x:Name="checkBox" Content="Multi-threading" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="645,604,0,0" FontFamily="Gabriola" FontSize="30" FontWeight="Bold"/>
+        <CheckBox x:Name="Priority_Queue" Content="Priority Queue" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="450,603,0,0" FontSize="30" FontFamily="Gabriola" FontWeight="Bold" Width="188" Checked="Priority_Queue_Checked"/>
+        <Button x:Name="btnStart" Click="btnStart_Click" Content="Start" Background="#FF1B4BAB" Height="Auto" Margin="99,579,570,64" BorderBrush="Black" FontFamily="Gabriola" FontSize="36" FontWeight="Bold"/>
+        <Button x:Name="btnOpendirsource" Click="btnOpendirsource_Click" Content="Source" Background="#FF1B4BAB" Height="Auto" Margin="97,330,572,316" BorderBrush="Black" FontSize="36" FontFamily="Gabriola" FontWeight="Bold"/>
+        <Button x:Name="btnOpenFile" Click="btnOpenFile_Click" Content="Open file" Background="#FF1B4BAB" Height="Auto" Margin="99,197,568,444" BorderBrush="Black" Foreground="#DDFFFFFF" FontFamily="Gabriola" FontSize="36" FontWeight="Bold"/>
+        <Button x:Name="btnOpendirtarget" Click="btnOpendirtarget_Click" Content="Target" Background="#FF1B4BAB" Height="Auto" Margin="96,456,573,191" BorderBrush="Black" Foreground="#DDFFFFFF" FontFamily="Gabriola" FontSize="36" FontWeight="Bold"/>
+        <Label x:Name="label" Content="&#xD;&#xA;" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="16,40,0,0" FontSize="36" FontFamily="Gabriola" FontWeight="Bold"/>
+        <Label x:Name="label1" Content="SOUND PACKING SYSTEM" HorizontalAlignment="Left" VerticalAlignment="Top" FontSize="60" FontFamily="Gabriola" Margin="126,44,0,0" FontWeight="Bold" Foreground="#DD11375D"/>
+        <Label x:Name="label2" Content="" HorizontalAlignment="Left" VerticalAlignment="Top" Height="116" Width="144" Margin="663,40,0,0">
+            <Label.Background>
+                <ImageBrush ImageSource="SOUND.jpg"/>
+            </Label.Background>
+        </Label>
+        <Label x:Name="label3" Content="Enter number of seconds :" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="467,655,0,0" RenderTransformOrigin="1.074,17.442" FontFamily="Gabriola" FontSize="30" FontWeight="Bold" Foreground="Black"/>
 
     </Grid>
 
