@@ -11,7 +11,7 @@ namespace Sounds_Packing
     class mergeSort
     {
         static public int count = 0;
-        public static void MergeSort(int[] input, int low, int high)
+        public static void MergeSort(ref List<int> input, int low, int high)
         {
             if (low >= high)
             {
@@ -20,26 +20,30 @@ namespace Sounds_Packing
             int mid = (low + high) >> 1;
             if (count < 4)
             {
-                count += 2;
-                Thread t1 = new Thread(() => MergeSort(input, low, mid));
+                count+=2;
+                Thread t1 = new Thread(() => MergeSort(ref input, low, mid));
                 t1.Start();
-                Thread t2 = new Thread(() => MergeSort(input, mid + 1, high));
+                Thread t2 = new Thread(() => MergeSort(ref input, mid + 1, high));
                 t2.Start();
                 t1.Abort();
                 t2.Abort();
-                count -= 2;
+                count-=2;
             }
-
-
-            Merge(input, low, mid, high);
+            else
+            {
+                MergeSort(ref input, low, mid);
+                MergeSort(ref input, mid + 1, high);
+            }
+            
+            Merge(ref input, low, mid, high);
         }
 
-        public static void MergeSort(int[] input)
+        public static void MergeSort(ref List<int> input)
         {
-            MergeSort(input, 0, input.Length - 1);
+            MergeSort(ref input, 0, input.Count() - 1);
         }
 
-        private static void Merge(int[] input, int low, int middle, int high)
+        private static void Merge(ref List<int> input, int low, int middle, int high)
         {
 
             int left = low;
@@ -49,7 +53,7 @@ namespace Sounds_Packing
 
             while ((left <= middle) && (right <= high))
             {
-                if (input[left] < input[right])
+                if (input[left] > input[right])
                 {
                     tmp[tmpIndex] = input[left];
                     left = left + 1;

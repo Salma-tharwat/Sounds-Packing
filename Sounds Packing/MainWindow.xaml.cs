@@ -44,21 +44,6 @@ namespace Sounds_Packing
         {
             InitializeComponent();
         }
-        public class Pair<T, U>
-        {
-            public Pair()
-            {
-            }
-
-            public Pair(T first, U second)
-            {
-                this.First = first;
-                this.Second = second;
-            }
-
-            public T First  { get; set; }
-            public U Second  { get; set; }
-        };
         private void btnOpenFile_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog openFileDialog = new Microsoft.Win32.OpenFileDialog();
@@ -195,7 +180,6 @@ namespace Sounds_Packing
             }
         }
         static public List<List<int>> ll = new List<List<int>>();
-        
         static public void metaData(int[]allocation)
         {
             //  ll[0].Add(0);
@@ -229,10 +213,6 @@ namespace Sounds_Packing
                 FS.Close();
             }*/
         }
-      //  2-->1,2,3,4
-      //  3-->5,6,7
-
-        
         static void WorstFit()
         {
             List<int> Folders = new List<int>();
