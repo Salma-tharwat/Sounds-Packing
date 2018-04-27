@@ -50,7 +50,7 @@ namespace Sounds_Packing
             FileStream FS = new FileStream(infoPath, FileMode.Open);
             StreamReader file = new StreamReader(FS);
             
-            while (file.Peek() != -1)
+            while (file.Peek() != -1)       
             {
                 string readline = file.ReadLine();
                 l.Add(readline);
@@ -428,7 +428,8 @@ namespace Sounds_Packing
             {
                 Console.WriteLine("file " + countt.ToString() + ' ');
                 List<int> folder_filling_Allocation = FolderFilling(ref v, ref w, v.Count() - 1, maxSec,V,keep);
-                string sPath = sourcePath;                 string tPath = targetPath; 
+                string sPath = sourcePath;
+                string tPath = targetPath; 
                 tPath += countt.ToString();
                 if (!System.IO.Directory.Exists(tPath))
                 {
