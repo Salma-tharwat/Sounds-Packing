@@ -356,42 +356,41 @@ namespace Sounds_Packing
         static List<int> FolderFilling(ref List<Tuple<int, int>> v, ref List<Tuple<int, int>> w, int n, int W,int[,]V,bool[,]keep)
         {
             List<int> l = new List<int>();
-            for (int i = 0; i < secList.Count+1; i++)
-            {
+           
+            for (int a = 0; a <= W; a++)  ///////////////////////////////////////
+            {                             //initializing rows and colomns of 
+                V[0, a] = 0;              //the table : row 0 and colomn 0 
+            }                             // with zeros to start biulding the table 
+            for (int i = 0; i < n; i++)   // Complexity : Loop 1: o(W)
+            {                             //            : Loop 2: o(N)
+                V[i, 0] = 0;              //
+            }                             /////////////////////////////////////////
 
-            }
-            for (int a = 0; a <= W; a++)
-            {
-                V[0, a] = 0;
-            }
-            for (int i = 0; i < n; i++)
-            {
-                V[i, 0] = 0;
-            }
-
-            for (int i = 1; i <= n; i++)
-            {
-                for (int j = 0; j <= W; j++)
-                {
-                    if ((w[i].Item1 <= j) && (v[i].Item1 + V[i - 1, j - w[i].Item1]) > V[i - 1, j])
-                    {
-                        V[i, j] = v[i].Item1 + V[i - 1, j - w[i].Item1];
-                        keep[i, j] = true;
-                    }
+            for (int i = 1; i <= n; i++)                                                            //////////////////////////////////////////////////////////////////////////////////////////////////////////
+            {                                                                                       // building the table of results to get :
+                for (int j = 0; j <= W; j++)                                                        // files that have combined size at most W ---> List 1(v)
+                {                                                                                   //The total computing time of the stored files is as large as possible ---> List 2(w)
+                    if ((w[i].Item1 <= j) && (v[i].Item1 + V[i - 1, j - w[i].Item1]) > V[i - 1, j]) // Similar as the knapsack logic 
+                    {                                                                               //We construct an array V[N][W]..For 1<=i>=N and 0<=w>=W , the entry V[i][w] will store the maximum(combined)
+                                                                                                    //computing time of any subset of files of(combined) size at most w .
+                        V[i, j] = v[i].Item1 + V[i - 1, j - w[i].Item1];    //Option 1:             //the array entry V[N][W] :
+                                                                                                    // will contain the maximum computing time of files that can fit into the storage which is the solution 
+                        keep[i, j] = true;                                 //File Taken             // equation used to build table : V[i, j] = v[i].Item1 + V[i - 1, j - w[i].Item1]
+                    }                                                                               ////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     else
-                    {
-                        V[i, j] = V[i - 1, j];
-                        keep[i, j] = false;
+                    {                                                                               ///////////////////////////////////
+                        V[i, j] = V[i - 1, j];// Option 2                                           // boolen array to mark taken files
+                        keep[i, j] = false;  // File Not Taken                                      ///////////////////////////////////
                     }
                 }
 
             }
             int K = W;
-            for (int k = n; k >= 1; k--)
-            {
-                if (keep[k, K] == true)
-                {
-                    l.Add(w[k].Item2);
+            for (int k = n; k >= 1; k--)                                 ////////////////////////////////////////////
+            {                                                            // loop on boolen array to get taken files 
+                if (keep[k, K] == true)                                  //Plce taken files in the list to be returned 
+                {                                                        // remove the taken files from the lists
+                    l.Add(w[k].Item2);                                   ////////////////////////////////////////////////
                     //Console.WriteLine(w[k].Item2.ToString());
                     K = K - w[k].Item1;
                     w.Remove(w[k]);
@@ -399,8 +398,13 @@ namespace Sounds_Packing
                 }
 
             }
-            return l;
+            return l;   //////////////////////////////////
+                        // List Containing the Taken files 
+                        //////////////////////////////////
         }
+        /// <Complexity>
+        /// O(N*W)  where W=N ----> O(N^2)
+        /// </Complexity>
         static void folderFilling()
         {
              bool[,] keep = new bool[secList.Count+1, secList.Count+1];
