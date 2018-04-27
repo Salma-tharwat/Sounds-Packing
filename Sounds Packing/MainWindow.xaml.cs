@@ -116,7 +116,7 @@ namespace Sounds_Packing
                 string destFile = System.IO.Path.Combine(tPath, fileName);
                 System.IO.File.Copy(sourceFile, destFile, true);
             }
-            metaData(allocation);
+           // metaData(allocation);
         }
         private void btnOpendirsource_Click(object sender, RoutedEventArgs e)
         {
@@ -232,18 +232,7 @@ namespace Sounds_Packing
       //  2-->1,2,3,4
       //  3-->5,6,7
 
-        static void metaData(int[] allocation)
-        {
-            int[] metadata = new int[allocation.Length+1];
-            Pair<int, int>[] index_num = new Pair<int, int>[allocation.Length+1];
-            for (int i=0;i<allocation.Length;i++)
-            {
-                
-                int folder = i + 1; int file = allocation[i];
-                index_num[folder].First++;
-
-            }
-        }
+        
         static void WorstFit()
         {
             List<int> Folders = new List<int>();
