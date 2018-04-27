@@ -72,9 +72,10 @@ namespace Sounds_Packing
 
             }
         }
-
+        public static int folder_counter = 0;
         static void Allocatingfiles(int[] allocation)
         {
+            folder_counter = 0;
             for (int i = 0; i < allocation.Length; i++)
             {
                 int num = i + 1;
@@ -84,6 +85,7 @@ namespace Sounds_Packing
                 tPath += allocation[i] + 1;
                 if (!System.IO.Directory.Exists(tPath))
                 {
+                   
                     System.IO.Directory.CreateDirectory(tPath);
                 }
 
@@ -91,6 +93,7 @@ namespace Sounds_Packing
                 string destFile = System.IO.Path.Combine(tPath, fileName);
                 System.IO.File.Copy(sourceFile, destFile, true);
             }
+            metaData(allocation);
         }
         private void btnOpendirsource_Click(object sender, RoutedEventArgs e)
         {
@@ -115,10 +118,47 @@ namespace Sounds_Packing
             ReadAudioFileInfo();
             System.Windows.MessageBox.Show(sourcePath.ToString());
             System.Windows.MessageBox.Show(targetPath.ToString());
-            Thread t = new Thread(delegate () { folderFilling(); });
-          //  Thread t1 = new Thread(() => WorstFit());
+            Thread t = new Thread(delegate () { WorstFit(); });
+            //  Thread t1 = new Thread(() => WorstFit());
             t.Start();
         }
+        static public List<List<int>> ll = new List<List<int>>();
+        
+        static public void metaData(int[]allocation)
+        {
+            //  ll[0].Add(0);
+            System.Windows.MessageBox.Show(folder_counter.ToString());
+            for(int i=1;i<=folder_counter;i++)
+            {
+                for(int j=0;j<allocation.Count();j++)
+                {
+                    if(allocation[j]==i)
+                    {
+                        ll[i].Add(j);
+                    }
+                }
+            }
+            System.Windows.MessageBox.Show(ll.Count.ToString());
+          /*  for (int i = 0; i <ll.Count();i++)
+            {
+                FileStream FS = new FileStream(targetPath + @"\F"+i+1.ToString() +".txt", FileMode.Append);
+                StreamWriter file = new StreamWriter(FS);
+                file.WriteLine(ll[i].Count().ToString());
+                int sum = 0;
+                for (int j=0;j<ll[i].Count();j++)
+                {
+                   
+                    file.WriteLine((DateTime.Parse(ll[i][j].ToString()).ToString()));
+                    sum += ll[i][j];
+                }
+                DateTime m = DateTime.Parse(sum.ToString());
+                file.WriteLine(m.ToString());
+                file.Close();
+                FS.Close();
+            }*/
+        }
+      //  2-->1,2,3,4
+      //  3-->5,6,7
 
         static void WorstFit()
         {
