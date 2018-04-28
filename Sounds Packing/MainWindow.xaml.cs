@@ -135,6 +135,7 @@ namespace Sounds_Packing
                 sw.Start();
 
                 Thread w = new Thread(delegate () { WorstFit(); });
+                w.Start();
                 sw.Stop();
                 System.Windows.MessageBox.Show("Worst Fit takes ", sw.ElapsedMilliseconds.ToString());
             }
@@ -211,12 +212,13 @@ namespace Sounds_Packing
                 int sum = 0;
                 for (int j = 0; j < ll[i].Count(); j++)
                 {
-
-                    file.WriteLine(secList[j].ToString());
-                    sum += secList[j];
+                    file.WriteLine((ll[i][j]+1).ToString() + ".amr" + ' ');
+                    file.WriteLine(' '+' '+' '+(secList[ll[i].ElementAt(j)]/1000).ToString()+' '+"Millisec");
+                    sum += secList[ll[i][j]];
                 }
                 // sum.ToString();
-                file.WriteLine(sum.ToString());
+                file.WriteLine("Total Duration"+' ');
+                file.Write(sum.ToString()+' '+"sec");
                 file.Close();
                 FS.Close();
             }
@@ -581,15 +583,16 @@ namespace Sounds_Packing
                 {
                     
                     {
-
-                        file.WriteLine(secList[i].ToString());
+                        file.WriteLine(i.ToString() + ".amr" + ' ');
+                        file.WriteLine(' '+' '+secList[i].ToString()+' '+"Milli Sec");
                         sum += secList[i];
                     }
                     // sum.ToString();
                    
 
                 }
-                file.WriteLine(sum.ToString());
+                file.WriteLine("Total duration "+' ');
+                file.WriteLine(' '+' '+sum.ToString());
                 countt++;
                 file.Close();
                 FS.Close();
